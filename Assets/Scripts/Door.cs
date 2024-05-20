@@ -9,8 +9,30 @@ public class Door : MonoBehaviour
         // Check if the object that enters the trigger has the "Player" tag
         if (other.gameObject.tag == "Player")
         {
-            // Open the door
-            OpenDoor();
+            other.gameObject.GetComponent<Player>();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            RemovePlayerInteractable(other.gameObject.GetComponent<Player>());
+        }
+    }
+
+    public override void Interact(Player thePlayer)
+    {
+        base.Interact();
+        thePlayer.IncreaseScore(myScore);
+        Collected();
+    }
+
+    void OnInteract()
+    {
+        if(currentInteractable != null)
+        {
+            currentInteractable.Interact(this);
         }
     }
 

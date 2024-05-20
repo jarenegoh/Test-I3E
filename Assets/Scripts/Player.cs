@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     GameObject collTextBox;
 
     int currentScore = 0;
+
+    Interactable currentInteractable;
         
     public void IncreaseScore(int scoreToAdd)
     {
@@ -19,6 +21,12 @@ public class Player : MonoBehaviour
         scoreText.text = currentScore.ToString();
         Debug.Log(currentScore);
     }
+
+    public void UpdateInteractable(Interactable newInteractable)
+    {
+
+    }
+
     // Start is called before the first frame update
     void Start()
     {
