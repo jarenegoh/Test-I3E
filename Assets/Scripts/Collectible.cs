@@ -2,27 +2,56 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collectible : MonoBehaviour
+public class Collectible : Interactable
 {
-    int collectible = 15;
+    /// <summary>
+    /// The score value that this collectible is worth.
+    /// </summary>
+    public int myScore = 5;
 
+    /// <summary>
+    /// Handles the collectibles interaction.
+    /// Increase the player's score and destroy itself
+    /// </summary>
+    /// <param name="thePlayer">The player that interacted with the object.</param>
+    public override void Interact(Player thePlayer)
+    {
+        base.Interact(thePlayer);
+        thePlayer.IncreaseScore(myScore);
+        Destroy(gameObject);
+        Collected(thePlayer);
+    }
+
+    /// <summary>
+    /// Callback function for when a collision occurs
+    /// </summary>
+    /// <param name="collision">Collision event data</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Player")
+        // Check if the object that
+        // touched me has a 'Player' tag
+        if(collision.gameObject.tag == "Player")
         {
-            gameObject.GetComponent<Player>().IncreaseScore(collectible);
-            Destroy(gameObject);
+            currentPlayer = collision.gameObject.GetComponent<Player>();
+            UpdatePlayerInteractable(currentPlayer);
         }
     }
-    // Start is called before the first frame update
-    void Start()
+
+    private void OnCollisionExit(Collision collision)
     {
-        
+        // Check if the object that
+        // stopped touching me has a 'Player' tag
+        if (collision.gameObject.tag == "Player")
+        {
+            RemovePlayerInteractable(currentPlayer);
+            currentPlayer = null;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public virtual void Collected(Player thePlayer)
     {
-        
+        Debug.Log("Collected");
     }
+
+
 }

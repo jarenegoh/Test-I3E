@@ -2,65 +2,89 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class Door : Interactable
 {
+    /// <summary>
+    /// Flags if the door is open
+    /// </summary>
+    bool opened = false;
+
+    /// <summary>
+    /// Flags if the door is locked
+    /// </summary>
+    bool locked = false;
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the object that enters the trigger has the "Player" tag
-        if (other.gameObject.tag == "Player")
+        // Check if the obejct entering the trigger has the "Player" tag
+        if(currentPlayer.tag == "Player")
         {
-            other.gameObject.GetComponent<Player>();
+            // Store the current player
+            currentPlayer = other.gameObject.GetComponent<Player>();
+
+            // Update the player interactable to be this door.
+            UpdatePlayerInteractable(currentPlayer);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        // Check if the obejct exiting the trigger has the "Player" tag
+        if (currentPlayer.tag == "Player")
         {
-            RemovePlayerInteractable(other.gameObject.GetComponent<Player>());
+            // Remove the player Interactable
+            RemovePlayerInteractable(currentPlayer);
+
+            // Set the current Player to null
+            currentPlayer = null;
         }
     }
 
+    /// <summary>
+    /// Handles the door's interaction
+    /// </summary>
+    /// <param name="thePlayer">The player that interacted with the door</param>
     public override void Interact(Player thePlayer)
     {
-        base.Interact();
-        thePlayer.IncreaseScore(myScore);
-        Collected();
+        // Call the Interact function from the base Interactable class.
+        base.Interact(thePlayer);
+
+        // Call the OpenDoor() function
+        OpenDoor();
     }
 
-    void OnInteract()
+    /// <summary>
+    /// Handles the door opening 
+    /// </summary>
+    public void OpenDoor()
     {
-        if(currentInteractable != null)
+        // Door should open only when it is not locked
+        // and not already opened.
+        if(!locked && !opened)
         {
-            currentInteractable.Interact(this);
+            // Cannot directly modify the transform rotation.
+            // transform.eulerAngles.y += 90f;
+
+            // Create a new Vector3 and store the current rotation.
+            Vector3 newRotation = transform.eulerAngles;
+
+            // Add 90 degrees to the y axis rotation
+            newRotation.y += 90f;
+
+            // Assign the new rotation to the transform
+            transform.eulerAngles = newRotation;
+
+            // Set the opened bool to true
+            opened = true;
         }
     }
 
-    void OpenDoor()
+    /// <summary>
+    /// Sets the lock status of the door.
+    /// </summary>
+    /// <param name="lockStatus">The lock status of the door</param>
+    public void SetLock(bool lockStatus)
     {
-        // Store the object's rotation
-        Vector3 newRotation = transform.eulerAngles;
-
-        // Modify the new variable
-        newRotation.y += 90f;
-
-        //  Re-assign the value to the object's rotation
-        transform.eulerAngles = newRotation;
-
-        //opened = true;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        Debug.Log(transform.position);
-        Debug.Log(transform.eulerAngles);
-        Debug.Log(transform.localScale);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // Assign the lockStatus value to the locked bool.
+        locked = lockStatus;
     }
 }

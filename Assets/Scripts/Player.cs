@@ -1,41 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
+    /// <summary>
+    /// The UI text that stores the player score
+    /// </summary>
     public TextMeshProUGUI scoreText;
-    GameObject collTextBox;
 
+    /// <summary>
+    /// The current score of the player
+    /// </summary>
     int currentScore = 0;
 
+    /// <summary>
+    /// The current Interactable of the player
+    /// </summary>
     Interactable currentInteractable;
-        
+
+
+    /// <summary>
+    /// Increases the score of the player by <paramref name="scoreToAdd"/>
+    /// </summary>
+    /// <param name="scoreToAdd">The amount to increase by</param>
     public void IncreaseScore(int scoreToAdd)
     {
-        // Need to make this appear after a certain condition
-        // Make the textbox GameObject appear
-        coolTextBox.SetActive(true);
-
+        // Increase the score of the player by scoreToAdd
         currentScore += scoreToAdd;
-        scoreText.text = currentScore.ToString();
-        Debug.Log(currentScore);
+
+        scoreText.text = "Score: " + currentScore.ToString();
     }
 
+    /// <summary>
+    /// Update the player's current Interactable
+    /// </summary>
+    /// <param name="newInteractable">The interactable to be updated</param>
     public void UpdateInteractable(Interactable newInteractable)
     {
-
+        currentInteractable = newInteractable;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Callback function for the Interact input action
+    /// </summary>
+    void OnInteract()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // Check if the current Interactable is null
+        if(currentInteractable != null)
+        {
+            // Interact with the object
+            currentInteractable.Interact(this);
+        }
     }
 }
